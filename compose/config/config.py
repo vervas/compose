@@ -659,7 +659,11 @@ def resolve_environment(service_dict, environment=None):
     for env_file in service_dict.get('env_file', []):
         env.update(env_vars_from_file(env_file))
 
-    env.update(parse_environment(service_dict.get('environment')))
+    service_environment = service_dict.get('environment')
+    if isinstance(service_environment, list):
+        service_environment = [env_var for env_subset in service_environment for env_var in env_subset]
+    
+    env.update(parse_environment(service_environment))
     return dict(resolve_env_var(k, v, environment) for k, v in six.iteritems(env))
 
 
